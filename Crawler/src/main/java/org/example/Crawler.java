@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Crawler {
     private static int currentBookId = 1;
@@ -61,8 +62,8 @@ public class Crawler {
     }
 
     private boolean saveBook(String content, String title, File outputFolder) {
-        String sanitizedTitle = title.replaceAll("[\\\\/:*?\"<>|]", "_");
-        File outputFile = new File(outputFolder, "book_" + sanitizedTitle + ".txt");
+        UUID uuid = UUID.randomUUID();
+        File outputFile = new File(outputFolder, uuid + ".txt");
 
         // Usar OutputStreamWriter con codificación UTF-8
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {

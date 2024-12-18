@@ -11,7 +11,6 @@
     <modules>
         <module>Crawler</module>
         <module>Indexer</module>
-        <module>Query-Engine</module>
         <module>API</module>
     </modules>
 

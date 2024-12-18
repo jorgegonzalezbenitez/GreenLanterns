@@ -2,6 +2,7 @@ package org.example;
 
 import static spark.Spark.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.core.HazelcastInstance;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,11 +14,14 @@ import java.util.stream.Collectors;
 public class QueryAPI {
     private final InvertedIndexLoader indexLoader;
     private final int port;
+    private final HazelcastInstance hazelCast;
 
-    public QueryAPI(String basePath, int port) {
+    public QueryAPI(String basePath, int port,HazelcastInstance hazelCast) {
         this.indexLoader = new InvertedIndexLoader(basePath);
         this.port = port;
+        this.hazelCast = hazelCast;
     }
+
 
     // Método para iniciar el servidor y configurar los endpoints
     public void startServer() {

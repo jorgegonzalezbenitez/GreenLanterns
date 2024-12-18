@@ -28,13 +28,8 @@ public class StoreInvertedIndex implements InvertedIndexStorer {
         if (!baseFolder.exists()) baseFolder.mkdirs();
 
         invertedDict.forEach((word, metadataList) -> {
-            String language = metadataList.get(0).getString("language");
-            if (language == null) {
-                System.err.println("No se encontró idioma para la palabra: " + word);
-                return;
-            }
 
-            File subFolder = new File(new File(baseFolder, language), getSubfolderName(word));
+            File subFolder = new File(baseFolder, getSubfolderName(word));
             if (!subFolder.exists()) subFolder.mkdirs();
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(subFolder, word + ".json")))) {
