@@ -5,9 +5,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class CrawlerMain {
-    private  static String datalakePath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\SearchEngine";
+    private final String datalakePath;
+
+    public CrawlerMain(String datalakePath) {
+        this.datalakePath = datalakePath;
+    }
+
     public static void main(String[] args) {
-        Crawler crawler = new Crawler(datalakePath);
+        Crawler crawler = new Crawler(args[0]);
         System.out.println("Ininciando la descarga de libros...\n");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 

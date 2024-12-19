@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BookList {
-    private static final String datalakePath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\SearchEngine\\Datalake";
 
-    public static Map<String, String> bookMapCreator() {
+
+    public static Map<String, String> bookMapCreator(String datalakePath) {
         Map<String, String> bookMap = new HashMap<>();
         File folder = new File(datalakePath);
 
@@ -41,6 +41,7 @@ public class BookList {
         } else {
             System.err.println("La ruta proporcionada no es un directorio válido: " + datalakePath);
         }
+        System.out.println("la clabve es: " + bookMap.keySet());
         return bookMap;
     }
 }

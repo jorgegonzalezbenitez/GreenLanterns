@@ -1,27 +1,21 @@
-package org.example;
+package org.example.api;
 
 import static spark.Spark.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hazelcast.core.HazelcastInstance;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class QueryAPI {
-    private final InvertedIndexLoader indexLoader;
-    private final int port;
     private final HazelcastInstance hazelCast;
+    private final int port;
 
-    public QueryAPI(String basePath, int port,HazelcastInstance hazelCast) {
-        this.indexLoader = new InvertedIndexLoader(basePath);
-        this.port = port;
+    public QueryAPI(HazelcastInstance hazelCast, int port) {
         this.hazelCast = hazelCast;
+        this.port = port;
     }
-
 
     // Método para iniciar el servidor y configurar los endpoints
     public void startServer() {
@@ -42,9 +36,10 @@ public class QueryAPI {
             return mapper.writeValueAsString(results);
         });
 
-        // Endpoint de estadísticas
+        // Endpoint de estadísticas (opcional: estadísticas básicas de Hazelcast)
         get("/statistics", (req, res) -> {
-            Map<String, Object> stats = indexLoader.getStatistics();
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("Total entries", hazelCast.getMap("datalake-map").size());
 
             res.type("application/json");
             ObjectMapper mapper = new ObjectMapper();
@@ -52,18 +47,17 @@ public class QueryAPI {
         });
     }
 
-    // Método que procesa la búsqueda en el índice
-    private Map<String, Object> processSearch(String wordParam) throws IOException {
+    private Map<String, Object> processSearch(String wordParam) {
         List<String> words = Arrays.stream(wordParam.split("\\s+|\\+"))
                 .map(String::trim)
                 .collect(Collectors.toList());
 
         Map<String, Object> results = new HashMap<>();
+        Map<String, String> hazelcastMap = hazelCast.getMap("datamart-map");
 
         for (String word : words) {
-            Map<String, Object> wordResult = indexLoader.searchWord(word);
-            if (wordResult != null) {
-                results.put(word, wordResult);
+            if (hazelcastMap.containsKey(word)) {
+                results.put(word, hazelcastMap.get(word));
             } else {
                 results.put(word, "Not found");
             }

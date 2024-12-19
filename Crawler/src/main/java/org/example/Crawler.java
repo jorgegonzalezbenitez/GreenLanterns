@@ -63,7 +63,8 @@ public class Crawler {
 
     private boolean saveBook(String content, String title, File outputFolder) {
         UUID uuid = UUID.randomUUID();
-        File outputFile = new File(outputFolder, "book_"+ uuid + ".txt");
+
+        File outputFile = new File(outputFolder, "book_" + uuid);
 
         // Usar OutputStreamWriter con codificación UTF-8
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
