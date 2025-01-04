@@ -24,7 +24,7 @@ public class BuiltInvertedIndex implements InvertedIndexBuilder {
     public Map<String, List<Document>> buildInvertedIndex(String datalake) {
         Map<String, List<Document>> invertedIndex = new HashMap<>();
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(datalake), "*.txt")) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(datalake), "*")) {
             for (Path path : directoryStream) {
                 try (BufferedReader reader = Files.newBufferedReader(path)) {
                     String line;

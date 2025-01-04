@@ -24,6 +24,7 @@ public class StoreInvertedIndex implements InvertedIndexStorer {
 
     @Override
     public void storeInvertedIndexJson(Map<String, List<Document>> invertedDict, String outputFolderPath) {
+        System.out.println(invertedDict);
         File baseFolder = new File(outputFolderPath, "jsonDatamart");
         if (!baseFolder.exists()) baseFolder.mkdirs();
 

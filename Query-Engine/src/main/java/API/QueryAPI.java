@@ -1,4 +1,4 @@
-package org.example.api;
+package API;
 
 import static spark.Spark.*;
 

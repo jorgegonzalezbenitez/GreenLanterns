@@ -6,13 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 
 public class IndexerMain {
-    private final String datalakePath ;
-    private final String jsonDatamartPath;
-
-    public IndexerMain(String datalakePath, String jsonDatamartPath) {
-        this.datalakePath = datalakePath;
-        this.jsonDatamartPath = jsonDatamartPath;
-    }
+    private static String datalakePath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\GreenLanterns\\Datalake";
+    private static String jsonDatamartPath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\GreenLanterns";
 
     public static void main(String[] args) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -23,11 +18,10 @@ public class IndexerMain {
         System.out.println("Iniciando la indexación...");
 
         scheduler.scheduleAtFixedRate(() -> {
-            invertedIndexStorer.storeInvertedIndexJson(invertedIndexBuilder.buildInvertedIndex(args[0]),args[1]);
+            invertedIndexStorer.storeInvertedIndexJson(invertedIndexBuilder.buildInvertedIndex(datalakePath),jsonDatamartPath);
             System.out.println("Los nuevos libros se han indexado correctamente en el JSON DATAMART");
 
-            invertedIndexStorer.storeInvertedIndexMongo(invertedIndexBuilder.buildInvertedIndex(args[0]));
-            System.out.println("Los nuevos libros se han indexado correctamente en el Mongo DATAMART");
+
         }, 2, 30 , TimeUnit.SECONDS); // Ejecuta cada 20 segundos
 
     }

@@ -1,4 +1,4 @@
-package org.example.controller;
+package Controller;
 
 
 import java.io.File;

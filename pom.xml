@@ -11,8 +11,7 @@
     <modules>
         <module>Crawler</module>
         <module>Indexer</module>
-        <module>API</module>
-        <module>HazelCast</module>
+        <module>Query-Engine</module>
     </modules>
 
     <properties>

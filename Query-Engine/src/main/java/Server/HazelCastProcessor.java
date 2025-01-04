@@ -1,11 +1,12 @@
-package org.example.server;
+package Server;
 
+import Controller.BookList;
+import Controller.WordList;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.example.controller.BookList;
-import org.example.controller.WordList;
+
 
 import java.io.File;
 import java.util.*;
