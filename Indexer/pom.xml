@@ -88,7 +88,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.example.IndexerMain</mainClass> <!-- Verifica que esta clase sea la correcta -->
+                            <mainClass>org.example.controller.IndexerMain</mainClass> <!-- Verifica que esta clase sea la correcta -->
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
                         </manifest>
@@ -109,7 +109,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.example.IndexerMain</mainClass>
+                                    <mainClass>org.example.controller.IndexerMain</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

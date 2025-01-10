@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class CrawlerMain {
-    private static String datalakePath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\GreenLanterns";
+    private static String datalakePath = "C:\\Users\\aadel\\Desktop\\GCID\\Tercero\\BD\\TrabajoFinal\\GreenLanterns\\Query-Engine";
 
     public CrawlerMain() {
     }
@@ -21,6 +21,6 @@ public class CrawlerMain {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             crawler.crawlerRunner();
-        }, 1L, 60L, TimeUnit.SECONDS);
+        }, 1L, 10L, TimeUnit.SECONDS);
     }
 }

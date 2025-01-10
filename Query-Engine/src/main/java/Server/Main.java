@@ -9,8 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    private static String datalakePath = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\GreenLanterns\\Datalake";
-    private static String jsonDatamart = "C:\\Users\\jorge gonzalez\\Documents\\Tercero 2024-2025\\1er Cuatri\\Big Data\\JavaSearchEngine\\GreenLanterns\\jsonDatamart";
+    private static String datalakePath = "/data/datalake";
+    private static String jsonDatamart = "/data/datamart";
 
     public static void main (String[]args){
             HazelCastProcessor hazelCastProcessor = new HazelCastProcessor(datalakePath,jsonDatamart);
