@@ -50,13 +50,8 @@ public class StoreInvertedIndex implements InvertedIndexStorer {
                 String word = entry.getKey();
                 List<Document> metadataList = entry.getValue();
 
-                String language = metadataList.get(0).getString("language");
-                if (language == null) {
-                    logger.warning("Language not found for word: " + word);
-                    return;
-                }
 
-                File subFolder = new File(new File(baseFolder, language), getSubfolderName(word));
+                File subFolder = new File(baseFolder, getSubfolderName(word));
                 if (!subFolder.exists()) {
                     subFolder.mkdirs();
                     logger.info("Created subfolder: " + subFolder.getAbsolutePath());

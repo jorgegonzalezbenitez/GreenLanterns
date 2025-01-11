@@ -26,8 +26,8 @@ public class HazelCastProcessor {
 
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(true)
-                .addMember("192.168.1.146")
-                .addMember("192.168.1.144");
+                .addMember("192.168.0.28")
+                .addMember("192.168.0.24");
 
         this.hazelcastInstance = Hazelcast.newHazelcastInstance(config);
     }

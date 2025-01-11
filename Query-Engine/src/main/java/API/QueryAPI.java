@@ -37,9 +37,16 @@ public class QueryAPI {
         });
 
         // Endpoint de estadísticas (opcional: estadísticas básicas de Hazelcast)
+        // Endpoint de estadísticas
         get("/statistics", (req, res) -> {
+            Map<String, List<String>> datalakeMap = hazelCast.getMap("datalake-map");
+
+            int totalBooks = datalakeMap.values().stream()
+                    .mapToInt(List::size)
+                    .sum();
+
             Map<String, Object> stats = new HashMap<>();
-            stats.put("Total entries", hazelCast.getMap("datalake-map").size());
+            stats.put("Total books", totalBooks);
 
             res.type("application/json");
             ObjectMapper mapper = new ObjectMapper();

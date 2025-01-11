@@ -40,7 +40,7 @@ public class BuildInvertedIndex implements InvertedIndexBuilder {
 
         logger.info("Starting to build the inverted index from datalake: " + datalake);
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(datalake), "book_*.txt")) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(datalake), "*.txt")) {
             List<Path> files = new ArrayList<>();
             directoryStream.forEach(files::add); // Collect all files to process
 

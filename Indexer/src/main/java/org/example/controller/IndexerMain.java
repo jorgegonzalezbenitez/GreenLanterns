@@ -12,8 +12,8 @@ import java.util.logging.*;
     public class IndexerMain {
         private static final Logger logger = Logger.getLogger(IndexerMain.class.getName());
 
-        private static String datalakePath = "C:\\Users\\aadel\\Desktop\\GCID\\Tercero\\BD\\TrabajoFinal\\GreenLanterns\\Query-Engine\\Datalake";
-        private static String jsonDatamartPath = "C:\\Users\\aadel\\Desktop\\GCID\\Tercero\\BD\\TrabajoFinal\\GreenLanterns\\Query-Engine";
+        private static String datalakePath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine\\Datalake";
+        private static String jsonDatamartPath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine";
 
         static {
             setupLogger();

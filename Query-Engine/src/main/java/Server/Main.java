@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    private static String datalakePath = "/data/datalake";
+    private static String datalakePath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine\\Datalake";
     private static String jsonDatamart = "/data/datamart";
 
     public static void main (String[]args){
