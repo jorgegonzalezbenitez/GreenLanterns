@@ -1,11 +1,12 @@
 package Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.Map;
 public class WordList {
 
     private final String folderRangePath;
@@ -14,12 +15,8 @@ public class WordList {
         this.folderRangePath = folderRangePath;
     }
 
-    /**
-     * Procesa los archivos JSON de una carpeta y devuelve una lista de mapas.
-     * Cada mapa tendrá la palabra (archivo sin extensión) como clave y el contenido JSON como valor.
-     */
-    public List<Map<String, String>> wordMapCreator() {
-        List<Map<String, String>> wordsList = new ArrayList<>();
+    public Map<String, Map<String, String>> wordMapCreator() {
+        Map<String, Map<String, String>> wordsMap = new HashMap<>();
         File folder = new File(folderRangePath);
 
         if (folder.exists() && folder.isDirectory()) {
@@ -32,13 +29,15 @@ public class WordList {
                     try {
                         String content = Files.readString(file.toPath()); // Leer contenido del archivo
 
-                        // Crear un mapa con la palabra y su contenido
-                        Map<String, String> wordMap = new HashMap<>();
-                        wordMap.put(word, content);
-                        wordsList.add(wordMap); // Añadir a la lista
+                        // Parsear el JSON como un mapa
+                        ObjectMapper mapper = new ObjectMapper();
+                        Map<String, String> wordData = mapper.readValue(content, Map.class);
+
+                        // Agregar al mapa principal
+                        wordsMap.put(word, wordData);
 
                     } catch (IOException e) {
-                        System.err.println("Error leyendo el archivo: " + file.getName());
+                        System.err.println("Error leyendo o parseando el archivo: " + file.getName());
                         e.printStackTrace();
                     }
                 }
@@ -47,6 +46,6 @@ public class WordList {
             System.err.println("Directorio no encontrado: " + folderRangePath);
         }
 
-        return wordsList;
+        return wordsMap;
     }
 }

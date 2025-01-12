@@ -20,7 +20,6 @@ public class BookList {
             if (files != null) {
                 for (File file : files) {
                     if (file.isFile() && file.getName().startsWith("book_")) {
-                        // Extraer el UUID del nombre del archivo
                         String fileName = file.getName();
                         String uuid = fileName.substring(5); // Elimina el prefijo "book_"
 

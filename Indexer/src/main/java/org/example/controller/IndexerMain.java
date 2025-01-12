@@ -12,8 +12,8 @@ import java.util.logging.*;
     public class IndexerMain {
         private static final Logger logger = Logger.getLogger(IndexerMain.class.getName());
 
-        private static String datalakePath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine\\Datalake";
-        private static String jsonDatamartPath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine";
+        private static String datalakePath = "C:\\Users\\aadel\\Desktop\\GCID\\Tercero\\BD\\TrabajoFinal\\GreenLanterns\\Query-Engine\\Datalake";
+        private static String jsonDatamartPath = "C:\\Users\\aadel\\Desktop\\GCID\\Tercero\\BD\\TrabajoFinal\\GreenLanterns\\Query-Engine";
 
         static {
             setupLogger();
@@ -27,7 +27,6 @@ import java.util.logging.*;
 
             logger.info("Starting indexing process...");
 
-            scheduler.scheduleAtFixedRate(() -> {
                 try {
                     logger.info("Building and storing inverted index in JSON Datamart...");
                     invertedIndexStorer.storeInvertedIndexJson(
@@ -36,19 +35,16 @@ import java.util.logging.*;
                     );
                     logger.info("Books have been successfully indexed in the JSON Datamart.");
 
-                    logger.info("Building and storing inverted index in MongoDB Datamart...");
-                    invertedIndexStorer.storeInvertedIndexMongo(
-                            invertedIndexBuilder.buildInvertedIndex(datalakePath)
-                    );
-                    logger.info("Books have been successfully indexed in the MongoDB Datamart.");
+                    //logger.info("Building and storing inverted index in MongoDB Datamart...");
+                    //invertedIndexStorer.storeInvertedIndexMongo(
+                     //       invertedIndexBuilder.buildInvertedIndex(datalakePath)
+                    //);
+                    //logger.info("Books have been successfully indexed in the MongoDB Datamart.");
                 } catch (Exception e) {
                     logger.severe("Error during the indexing process: " + e.getMessage());
                     e.printStackTrace(); // Optional: Include stack trace for debugging
                 }
-            }, 1, 10, TimeUnit.SECONDS); // Executes every 30 seconds after an initial delay of 2 seconds
-
-        }
-
+            }
         private static void setupLogger() {
             try {
                 // Elimina handlers duplicados
