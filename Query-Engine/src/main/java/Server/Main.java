@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static String datalakePath = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine\\Datalake";
-    private static String jsonDatamart = "/data/datamart";
+    private static String jsonDatamart = "C:\\Users\\cgsos\\Documents\\Tercero\\Big Data\\JavaSearchEngine\\GreenLanterns\\Query-Engine\\jsonDatamart";
 
     public static void main (String[]args){
             HazelCastProcessor hazelCastProcessor = new HazelCastProcessor(datalakePath,jsonDatamart);

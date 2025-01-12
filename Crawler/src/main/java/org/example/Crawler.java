@@ -25,7 +25,7 @@ public class Crawler {
     private static int currentBookId = 1;
     private final String datalakePath;
     private static final int MAX_THREADS = 4;
-    private static final int BOOKS_PER_RUN = 5;
+    private static final int BOOKS_PER_RUN = 100;
 
     public Crawler(String datalakePath) {
         this.datalakePath = datalakePath;
@@ -37,7 +37,7 @@ public class Crawler {
         logger.info("Starting to download books from ID " + currentBookId + "...");
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
-        for(int i = 0; i < 10; ++i) {
+        for(int i = 0; i < 100; ++i) {
             int bookId = currentBookId++;
             executor.submit(() -> {
                 this.fetchBookContent(bookId);

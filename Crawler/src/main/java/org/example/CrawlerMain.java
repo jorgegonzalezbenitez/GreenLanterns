@@ -19,8 +19,8 @@ public class CrawlerMain {
         Crawler crawler = new Crawler(datalakePath);
         System.out.println("Starting book downloads...\n");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(() -> {
-            crawler.crawlerRunner();
-        }, 1L, 10L, TimeUnit.SECONDS);
+        //scheduler.scheduleAtFixedRate(() -> {
+        crawler.crawlerRunner();
+        //}, 1L, 10L, TimeUnit.SECONDS);
     }
 }
