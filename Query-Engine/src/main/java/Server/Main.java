@@ -33,9 +33,9 @@ public class Main {
             }
 
             executor.execute(() -> {
-                System.out.println("=== PROCESANDO DATALAKE ===");
+                System.out.println("=== PROCESANDO DATAMART ===");
                 hazelCastProcessor.loadData();
-                System.out.println("=== FINALIZADO PROCESO DEL DATALAKE ===");
+                System.out.println("=== FINALIZADO PROCESO DEL DATAMART ===");
             });
 
             // Esperar que los hilos finalicen
