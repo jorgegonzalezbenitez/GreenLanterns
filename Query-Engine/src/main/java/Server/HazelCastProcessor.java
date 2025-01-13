@@ -20,10 +20,9 @@ public class HazelCastProcessor {
         this.dataLakePath = dataLakePath;
         this.dataMartPath = dataMartPath;
 
-        // Inicializar Hazelcast una vez para reutilizar en todas las funciones
+        // Configuración optimizada de Hazelcast
         Config config = new Config();
         JoinConfig joinConfig = config.getNetworkConfig().getJoin();
-
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(true)
                 .addMember("192.168.0.28");
@@ -32,31 +31,26 @@ public class HazelCastProcessor {
     }
 
     public void processData() {
-        // Obtener el mapa de Hazelcast
-        Map<String, Object> hazelcastMap = hazelcastInstance.getMap("datalake-map");
+        Map<String, List<String>> hazelcastMap = hazelcastInstance.getMap("datalake-map");
 
-        // Crear datos para procesar
         Map<String, String> bookMap = BookList.bookMapCreator(dataLakePath);
 
-        // Procesar y almacenar los datos
-        List<Map<String, String>> bookList = new ArrayList<>();
-        for (Map.Entry<String, String> entry : bookMap.entrySet()) {
-            Map<String, String> singleBookMap = new HashMap<>();
-            singleBookMap.put(entry.getKey(), entry.getValue());
-            bookList.add(singleBookMap);
-        }
+        int batchSize = 100;
+        List<Map.Entry<String, String>> entries = new ArrayList<>(bookMap.entrySet());
+        for (int i = 0; i < entries.size(); i += batchSize) {
+            int end = Math.min(i + batchSize, entries.size());
+            List<Map.Entry<String, String>> batch = entries.subList(i, end);
 
-        hazelcastMap.put("Books", bookList);
-
-        // Mostrar datos almacenados
-        System.out.println("Data stored in Hazelcast under key 'Books':");
-        List<Map<String, String>> storedBooks = (List<Map<String, String>>) hazelcastMap.get("Books");
-        for (Map<String, String> bookEntry : storedBooks) {
-            for (Map.Entry<String, String> entry : bookEntry.entrySet()) {
-                System.out.println("ID: " + entry.getKey() + " Content: " + entry.getValue());
+            for (Map.Entry<String, String> entry : batch) {
+                hazelcastMap.put(entry.getKey(), Collections.singletonList(entry.getValue()));
             }
+
+            System.out.println("Lote cargado: " + (i / batchSize + 1));
         }
+
+        System.out.println("Carga completa de datos.");
     }
+
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
@@ -65,7 +59,6 @@ public class HazelCastProcessor {
         // Obtener el mapa de Hazelcast
         Map<String, String> hazelcastMap = hazelcastInstance.getMap("datamart-map");
 
-        // Listar carpetas dentro del Data Mart
         File baseDirectory = new File(dataMartPath);
         File[] folders = baseDirectory.listFiles(File::isDirectory);
 
@@ -74,6 +67,7 @@ public class HazelCastProcessor {
             return;
         }
 
+        int totalEntries = 0;
         for (File folder : folders) {
             String folderName = folder.getName();
             String folderPath = folder.getAbsolutePath();
@@ -84,15 +78,20 @@ public class HazelCastProcessor {
 
             for (Map<String, String> wordData : wordsList) {
                 for (Map.Entry<String, String> entry : wordData.entrySet()) {
+                    if (totalEntries >= 1000) break;
                     hazelcastMap.put(entry.getKey(), entry.getValue());
+                    totalEntries++;
                 }
             }
         }
 
-        // Mostrar datos cargados
+        // Mostrar algunos datos cargados (limitado a 10 para evitar spam en consola)
         System.out.println("Contenido del mapa Hazelcast:");
+        int count = 0;
         for (Map.Entry<String, String> entry : hazelcastMap.entrySet()) {
             System.out.println("Clave: " + entry.getKey() + " -> Valor: " + entry.getValue());
+            if (++count >= 10) break;
         }
     }
 }
+

@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -22,155 +23,142 @@ import java.util.regex.Pattern;
 
 public class Crawler {
     private static final Logger logger = Logger.getLogger(Crawler.class.getName());
+
     private static int currentBookId = 1;
     private final String datalakePath;
     private static final int MAX_THREADS = 4;
     private static final int BOOKS_PER_RUN = 100;
+    private static final int N_BOOKS = 2100;
+
+    private final AtomicInteger booksDownloaded = new AtomicInteger(0);
 
     public Crawler(String datalakePath) {
         this.datalakePath = datalakePath;
-        this.setupLogger();
+        setupLogger();
     }
 
     public void crawlerRunner() {
-        this.setupStorage();
-        logger.info("Starting to download books from ID " + currentBookId + "...");
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        while (booksDownloaded.get() < N_BOOKS) { // Verifica si se han descargado suficientes libros
+            setupStorage();
+            logger.info("Starting to download books from ID " + currentBookId + "...");
 
-        for(int i = 0; i < 100; ++i) {
-            int bookId = currentBookId++;
-            executor.submit(() -> {
-                this.fetchBookContent(bookId);
-            });
-        }
+            ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
 
-        executor.shutdown();
+            for (int i = 0; i < BOOKS_PER_RUN; i++) {
+                if (booksDownloaded.get() >= N_BOOKS) break; // Detener si ya se alcanzaron los libros necesarios
 
-        try {
-            if (!executor.awaitTermination(10L, TimeUnit.MINUTES)) {
-                executor.shutdownNow();
-                logger.warning("Some threads were forcibly terminated due to timeout.");
+                int bookId = currentBookId++;
+                executor.submit(() -> {
+                    if (fetchBookContent(bookId)) {
+                        booksDownloaded.incrementAndGet(); // Incrementar solo si la descarga fue exitosa
+                        logger.info("Books downloaded so far: " + booksDownloaded.get());
+                    }
+                });
             }
-        } catch (InterruptedException var4) {
-            executor.shutdownNow();
-            logger.severe("Execution interrupted: " + var4.getMessage());
-        }
 
-        logger.info("Execution completed. Waiting for the next scheduled run.");
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(10, TimeUnit.MINUTES)) {
+                    executor.shutdownNow();
+                    logger.warning("Some threads were forcibly terminated due to timeout.");
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                logger.severe("Execution interrupted: " + e.getMessage());
+            }
+
+            logger.info("Batch completed. Books downloaded so far: " + booksDownloaded.get());
+        }
+        logger.info("Execution completed. " + booksDownloaded.get() + " books downloaded.");
     }
 
     private void setupStorage() {
-        File dir = new File(this.datalakePath, "Datalake");
+        File dir = new File(datalakePath, "Datalake");
         if (!dir.exists()) {
             dir.mkdirs();
             logger.info("Storage directory created at: " + dir.getAbsolutePath());
         } else {
             logger.info("Storage directory exists: " + dir.getAbsolutePath());
         }
-
     }
 
-    private void fetchBookContent(int bookId) {
-        String[] extensions = new String[]{"txt", "html", "epub", "mobi"};
+    // Attempt to download a book in multiple formats and extract its title
+    private boolean fetchBookContent(int bookId) {
+        String[] extensions = {"txt"};
         String baseUrl = "https://www.gutenberg.org/cache/epub/" + bookId + "/pg" + bookId;
-        String[] var4 = extensions;
-        int var5 = extensions.length;
-        int var6 = 0;
 
-        while(var6 < var5) {
-            String ext = var4[var6];
+        for (String ext : extensions) {
             String downloadUrl = baseUrl + "." + ext;
-            String filePath = this.datalakePath + "/Datalake/book_" + bookId + "." + ext;
-            if (Files.exists(Paths.get(filePath), new LinkOption[0])) {
+            String filePath = datalakePath + "/Datalake/book_" + bookId + "." + ext;
+
+            if (Files.exists(Paths.get(filePath))) {
                 logger.info("The file " + filePath + " already exists. Skipping...");
-                return;
+                return false;
             }
 
-            try {
-                InputStream in = (new URL(downloadUrl)).openStream();
-
-                try {
-                    String content = new String(in.readAllBytes());
-                    String title = this.extractTitle(content);
-                    if (title == null) {
-                        logger.warning("Could not extract the title for book " + bookId);
-                        title = "unknown_title_" + bookId;
-                    }
-
-                    String sanitizedTitle = title.replaceAll("[\\\\/:*?\"<>|]", "_");
-                    String outputPath = this.datalakePath + "/Datalake/book_" + sanitizedTitle + "." + ext;
-                    Files.write(Paths.get(outputPath), content.getBytes(), new OpenOption[0]);
-                    logger.info("Downloaded: " + outputPath);
-                } catch (Throwable var16) {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (Throwable var15) {
-                            var16.addSuppressed(var15);
-                        }
-                    }
-
-                    throw var16;
+            try (InputStream in = new URL(downloadUrl).openStream()) {
+                // Read content to extract title
+                String content = new String(in.readAllBytes());
+                String title = extractTitle(content);
+                if (title == null) {
+                    logger.warning("Could not extract the title for book " + bookId);
+                    title = "unknown_title_" + bookId;
                 }
 
-                if (in != null) {
-                    in.close();
-                }
-
-                return;
-            } catch (IOException var17) {
-                IOException e = var17;
+                // Save content using the title as the file name
+                String sanitizedTitle = title.replaceAll("[\\\\/:*?\"<>|]", "_");
+                String outputPath = datalakePath + "/Datalake/book_" + sanitizedTitle + "." + ext;
+                Files.write(Paths.get(outputPath), content.getBytes());
+                logger.info("Downloaded: " + outputPath);
+                return true; // La descarga fue exitosa
+            } catch (IOException e) {
                 logger.warning("Failed to download " + downloadUrl + ": " + e.getMessage());
-                ++var6;
             }
         }
 
         logger.warning("Failed to download book " + bookId + " in any supported format.");
+        return false; // La descarga falló
     }
 
+    // Extract the title from the content
     private String extractTitle(String content) {
         String[] lines = content.split(System.lineSeparator());
         Pattern titlePattern = Pattern.compile("Title:\\s*(.*)");
-        String[] var4 = lines;
-        int var5 = lines.length;
 
-        for(int var6 = 0; var6 < var5; ++var6) {
-            String line = var4[var6];
+        for (String line : lines) {
             Matcher matcher = titlePattern.matcher(line);
             if (matcher.find()) {
                 return matcher.group(1).trim();
             }
         }
 
-        return null;
+        return null; // Title not found
     }
 
+    // Set up the logger
     private void setupLogger() {
         try {
             Logger rootLogger = Logger.getLogger("");
             Handler[] handlers = rootLogger.getHandlers();
-            Handler[] var3 = handlers;
-            int var4 = handlers.length;
-
-            for(int var5 = 0; var5 < var4; ++var5) {
-                Handler handler = var3[var5];
+            for (Handler handler : handlers) {
                 rootLogger.removeHandler(handler);
             }
 
-            FileHandler fileHandler = new FileHandler(this.datalakePath + "/crawler.log", true);
+            FileHandler fileHandler = new FileHandler(datalakePath + "/crawler.log", true);
             fileHandler.setFormatter(new SimpleFormatter());
             fileHandler.setLevel(Level.ALL);
             logger.addHandler(fileHandler);
+
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setFormatter(new SimpleFormatter());
             consoleHandler.setLevel(Level.ALL);
             logger.addHandler(consoleHandler);
+
             logger.setLevel(Level.ALL);
             rootLogger.setLevel(Level.ALL);
-        } catch (IOException var7) {
-            IOException e = var7;
+
+        } catch (IOException e) {
             logger.severe("Failed to set up logger: " + e.getMessage());
         }
-
     }
 }
