@@ -67,15 +67,6 @@ public class StoreInvertedIndex implements InvertedIndexStorer {
         }
 
         executor.shutdown();
-        try {
-            if (!executor.awaitTermination(10, TimeUnit.MINUTES)) {
-                executor.shutdownNow();
-                logger.warning("Some tasks were forcibly terminated due to timeout.");
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-            logger.severe("Execution interrupted: " + e.getMessage());
-        }
 
         logger.info("Completed storing inverted index as JSON files. Total words processed: " + totalWords);
     }
@@ -109,15 +100,7 @@ public class StoreInvertedIndex implements InvertedIndexStorer {
             }
 
             executor.shutdown();
-            try {
-                if (!executor.awaitTermination(10, TimeUnit.MINUTES)) {
-                    executor.shutdownNow();
-                    logger.warning("Some tasks were forcibly terminated due to timeout.");
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                logger.severe("Execution interrupted: " + e.getMessage());
-            }
+
 
             logger.info("Completed storing inverted index in MongoDB. Total words processed: " + totalWords);
         } catch (Exception e) {

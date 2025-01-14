@@ -36,11 +36,11 @@ import java.util.logging.*;
                     );
                     logger.info("Books have been successfully indexed in the JSON Datamart.");
 
-                    //logger.info("Building and storing inverted index in MongoDB Datamart...");
-                    //invertedIndexStorer.storeInvertedIndexMongo(
-                      //      invertedIndexBuilder.buildInvertedIndex(datalakePath)
-                    //);
-                    //logger.info("Books have been successfully indexed in the MongoDB Datamart.");
+                    logger.info("Building and storing inverted index in MongoDB Datamart...");
+                    invertedIndexStorer.storeInvertedIndexMongo(
+                            invertedIndexBuilder.buildInvertedIndex(datalakePath)
+                    );
+                    logger.info("Books have been successfully indexed in the MongoDB Datamart.");
                 } catch (Exception e) {
                     logger.severe("Error during the indexing process: " + e.getMessage());
                     e.printStackTrace(); // Optional: Include stack trace for debugging

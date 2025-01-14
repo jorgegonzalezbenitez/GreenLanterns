@@ -17,11 +17,11 @@ public class QueryAPI {
         this.port = port;
     }
 
-    // Método para iniciar el servidor y configurar los endpoints
     public void startServer() {
+
+
         port(this.port);
 
-        // Endpoint de búsqueda
         get("/search", (req, res) -> {
             String wordParam = req.queryParams("word");
             if (wordParam == null || wordParam.isEmpty()) {
@@ -36,8 +36,7 @@ public class QueryAPI {
             return mapper.writeValueAsString(results);
         });
 
-        // Endpoint de estadísticas (opcional: estadísticas básicas de Hazelcast)
-        // Endpoint de estadísticas
+
         get("/statistics", (req, res) -> {
             Map<String, List<String>> datalakeMap = hazelCast.getMap("datalake-map");
 
@@ -52,6 +51,7 @@ public class QueryAPI {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.writeValueAsString(stats);
         });
+
     }
 
     private Map<String, Object> processSearch(String wordParam) {
@@ -71,4 +71,5 @@ public class QueryAPI {
         }
         return results;
     }
+
 }
