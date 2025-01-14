@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 public class WordList {
 
@@ -15,8 +17,8 @@ public class WordList {
         this.folderRangePath = folderRangePath;
     }
 
-    public Map<String, Map<String, String>> wordMapCreator() {
-        Map<String, Map<String, String>> wordsMap = new HashMap<>();
+    public List<Map<String, String>> wordMapCreator() {
+        List<Map<String,String>> wordsList = new ArrayList<>();
         File folder = new File(folderRangePath);
 
         if (folder.exists() && folder.isDirectory()) {
@@ -30,11 +32,11 @@ public class WordList {
                         String content = Files.readString(file.toPath()); // Leer contenido del archivo
 
                         // Parsear el JSON como un mapa
-                        ObjectMapper mapper = new ObjectMapper();
-                        Map<String, String> wordData = mapper.readValue(content, Map.class);
+                        Map<String, String> wordMap = new HashMap<>();
 
                         // Agregar al mapa principal
-                        wordsMap.put(word, wordData);
+                        wordMap.put(word, content);
+                        wordsList.add(wordMap);
 
                     } catch (IOException e) {
                         System.err.println("Error leyendo o parseando el archivo: " + file.getName());
@@ -46,6 +48,6 @@ public class WordList {
             System.err.println("Directorio no encontrado: " + folderRangePath);
         }
 
-        return wordsMap;
+        return wordsList;
     }
 }

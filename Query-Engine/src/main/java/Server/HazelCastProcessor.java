@@ -85,7 +85,7 @@ public class HazelCastProcessor {
                         System.out.println("Processing folder: " + folder.getName());
 
                         WordList wordList = new WordList(folder.getAbsolutePath());
-                        List<Map<String, String>> wordsList = wordList.wordMapCreator();
+                        List<Map<String, String>> wordsList =  wordList.wordMapCreator();
 
                         int batchSize = 100;  // Reducimos el tamaño del lote a 100 palabras
                         Map<String, String> batchMap = new HashMap<>();
