@@ -126,6 +126,5 @@ public class HazelCastProcessor {
             Thread.currentThread().interrupt();
             System.err.println("Error during concurrent loading: " + e.getMessage());
         }
-
     }
 }
