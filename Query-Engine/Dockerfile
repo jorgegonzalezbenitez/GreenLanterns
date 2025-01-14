@@ -17,4 +17,4 @@ COPY ./Datalake /data/datalake
 # Exponemos el puerto en el que la API va a escuchar las solicitudes
 EXPOSE 4567
 
-CMD ["java", "-jar", "Query-Engine-1.0-SNAPSHOT.jar"]
+CMD ["java","-Xmx1g","-Xmx6g", "-jar", "Query-Engine-1.0-SNAPSHOT.jar"]

@@ -24,24 +24,15 @@ public class BookList {
                         String fileName = file.getName();
                         String uuid = fileName.substring(5); // Elimina el prefijo "book_"
 
-                        try {
-                            // Leer el contenido del archivo
-                            String content = Files.readString(file.toPath());
+                        // Agregar el ID y el contenido al mapa
+                        bookMap.put(uuid, fileName);
 
-                            // Agregar el ID y el contenido al mapa
-                            bookMap.put(uuid, content);
-
-                        } catch (IOException e) {
-                            System.err.println("Error leyendo el archivo: " + file.getName());
-                            e.printStackTrace();
-                        }
                     }
                 }
             }
         } else {
             System.err.println("La ruta proporcionada no es un directorio válido: " + datalakePath);
         }
-        System.out.println("la clabve es: " + bookMap.keySet());
         return bookMap;
     }
 }
